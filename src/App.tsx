@@ -1,5 +1,7 @@
+import Form from "./Form";
+
 function App() {
-  return <div>Hello from sandbox!</div>;
+  return <Form />;
 }
 
 export default App;
