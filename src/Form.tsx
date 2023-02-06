@@ -29,9 +29,11 @@ const allColors = ["blue", "red", "green", "purple", "yellow"];
 const Form = () => {
   const formMethods = useForm({ defaultValues });
   const {
-    formState: { dirtyFields },
+    formState: { dirtyFields, isDirty },
     watch,
   } = formMethods;
+
+  console.log("isDirty", isDirty);
 
   return (
     <FormProvider {...formMethods}>
@@ -107,12 +109,19 @@ const CheckBoxes = ({ name }: InputProps) => {
   );
 };
 
-const ChildComponent = ({ name }: InputProps) => {
+interface ChildComponentProps extends InputProps {
+  onDelete?: () => void;
+}
+
+const ChildComponent = ({ name, onDelete }: ChildComponentProps) => {
   const { field } = useController({ name });
 
   return (
     <FlexBox flexDirection="column" space={4}>
-      <Label htmlFor={name}>{name}</Label>
+      <FlexBox justifyContent={"space-between"} alignItems="center">
+        <Label htmlFor={name}>{name}</Label>
+        <button onClick={onDelete}>Delete</button>
+      </FlexBox>
       <FlexBox flexDirection="column" space={8}>
         <FlexBox space={4} style={{ alignItems: "baseline" }}>
           <Text>Name</Text>
@@ -136,13 +145,13 @@ const ChildComponent = ({ name }: InputProps) => {
 };
 
 const ChildrenComponent = ({ name }: InputProps) => {
-  const { fields, append } = useFieldArray({ name });
+  const { fields, append, remove } = useFieldArray({ name });
 
   return (
     <FlexBox flexDirection="column" space={12}>
       <Label htmlFor={name}>{name}</Label>
       {fields.map((_, index) => (
-        <ChildComponent key={`${name}.${index}`} name={`${name}.${index}`} />
+        <ChildComponent key={`${name}.${index}`} name={`${name}.${index}`} onDelete={() => remove(index)} />
       ))}
       <button onClick={() => append({ firstName: "", lastName: "" })}>Add</button>
     </FlexBox>
